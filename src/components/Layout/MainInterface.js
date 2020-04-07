@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import NavBar from './NavBar'
+import Chat from './Chat'
 import Chats from './Chats'
 import Contacts from './Contacts'
 import { Route, Switch } from 'react-router-dom';
@@ -21,13 +22,14 @@ class MainInterface extends Component {
     render() {
         console.log(this.props.currentUser)
         console.log(this.props.contacts)
-        if (!this.props.user) return <Redirect to="/" />
+        //if (!this.props.user) return <Redirect to="/" />
         return (
             <div>
                 <NavBar user={this.props.currentUser}/>
                 <Switch>
                     <Route exact path="/messenger" component={Chats} />
                     <Route path="/messenger/contacts" component={Contacts} />
+                    <Route path="/messenger/chat" component={Chat} />
                 </Switch>
             </div>
         )

@@ -107,6 +107,7 @@ export const getContacts = (user) => {
             contacts.forEach(contact => {
                 firestore.collection('users').doc(contact).get().then(doc => {
                     const contactObject = doc.data()
+                    contactObject.userId = contact
                     console.log(contactObject)
                     contactsArray.push(contactObject)
                 })
@@ -115,6 +116,20 @@ export const getContacts = (user) => {
             dispatch({type: "GET_CONTACTS", contactsArray})
         }).catch(err => {
             dispatch({type: "GET_CONTACTS_ERROR", err})
+        })
+    }
+}
+
+export const startChat = (currentUser, user) => {
+    return (dispatch) => {
+        const firestore = Firebase.firestore();
+        firestore.collection('chats').add({
+            chat: [],
+            participants: [currentUser, user]
+        }).then(() => {
+            dispatch({type: "CHAT_STARTED"})
+        }).catch(err => {
+            console.log(err)
         })
     }
 }

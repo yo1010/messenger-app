@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
-import { acceptInvite } from '../../store/actions/userActions'
+import { acceptInvite, startChat } from '../../store/actions/userActions'
+import { Link } from 'react-router-dom'
 
 
 class Contacts extends Component {
@@ -21,7 +22,7 @@ class Contacts extends Component {
                                     <span className="contactName">
                                         {contact.firstName} {contact.lastName}
                                     </span>
-                                    <button className="chatButton ml-1"><i className="far fa-comments"/></button>
+                                    <button className="chatButton ml-1"><Link to="/messenger/chat" onClick={() => this.props.startChat(this.props.user, contact.userId)}><i className="far fa-comments"/></Link></button>
                                 </div>
                             )
                         })}
@@ -56,7 +57,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        acceptInvite: (user, invite) => dispatch(acceptInvite(user, invite))
+        acceptInvite: (user, invite) => dispatch(acceptInvite(user, invite)),
+        startChat: (currentUser, user) => dispatch(startChat(currentUser, user))
     }
 }
 
