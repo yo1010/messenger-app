@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
+import img from '../../userImg.jpg'
 
 export default class Chat extends Component {
     constructor() {
@@ -14,9 +15,22 @@ export default class Chat extends Component {
         ]
     }
     render() {
+        console.log(this.props)
         return (
             <ChatWrapper>
                 <div className="chatContainer">
+                    <div className="chatHeader">
+                        <div className="row">
+                            <div className="col-2">
+                                <div className="div-img">{this.props.location.state.chat.participantInitials[0] === this.props.initials ? this.props.location.state.chat.participantInitials[1] : this.props.location.state.chat.participantInitials[0]}</div>
+                            </div>
+                            <div className="col-10">
+                                <div className="chatTitle">
+                                    {this.props.location.state.chat.participantName[0] === this.props.fullName ? this.props.location.state.chat.participantName[1] : this.props.location.state.chat.participantName[0]}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div className="chatBody">
                         {this.array.map(message => {
                             return (
@@ -76,6 +90,36 @@ const ChatWrapper = styled.div`
     top: 0%:
     left: 0%;
     z-index: -1;
+    .chatHeader {
+        margin-left: 10rem;
+        padding: 1rem;
+        background: gainsboro; 
+        box-shadow: 0px 0px 10px -5px grey;
+        .div-img {
+            width: 4rem;
+            text-align: center;
+            padding-top: 1.2rem;
+            height: 4rem;
+            margin-bottom: 0.5rem;
+            padding-left: 0.8rem;
+            padding-right: 0.8rem;
+            border: none;
+            border-radius: 50%;
+            color: seagreen;
+            font-weight: bold;
+            font-size: 1.2rem;
+            outline: none;
+            background-image: url(${img});
+            background-size: cover;
+        }
+        .chatTitle {
+            margin-top: 1rem;
+            color: seagreen;
+            font-weight: bold;
+            text-align: right;
+
+        }
+    }
     .chatContainer {
         position: fixed;
         width:100vw;

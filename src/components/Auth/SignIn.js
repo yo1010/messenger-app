@@ -25,7 +25,7 @@ class SignIn extends Component{
         console.log(e.target.parentNode.childNodes[0])
     }
     render() {
-        if (this.props.userId) return <Redirect to="/messenger" />
+        if (this.props.userId) return <Redirect to={{pathname: '/messenger', state: {userId: this.props.userId}}} />
         return (
             <SignInWrapper>
                 <AuthNav />

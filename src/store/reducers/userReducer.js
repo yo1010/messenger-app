@@ -5,7 +5,6 @@ const initState = {
 function userReducer(state=initState, action) {
     switch(action.type) {
         case 'GET_USERS':
-            console.log(action.userArray)
             return {
                 ...state,
                 users: action.userArray
@@ -19,6 +18,7 @@ function userReducer(state=initState, action) {
                 currentUser: action.currentUser
             }
         case 'GET_INVITES':
+            console.log('getting invites')
             return {
                 ...state,
                 invites: action.invites
@@ -37,6 +37,7 @@ function userReducer(state=initState, action) {
                 inviteWrong: action.errorMessage
             }
         case 'GET_CONTACTS':
+            console.log('getting contacts')
             return {
                 ...state, 
                 contacts: action.contactsArray
@@ -44,6 +45,27 @@ function userReducer(state=initState, action) {
         case 'GET_CONTACTS_ERROR':
             console.log(action.err)
             return state
+        case 'CHAT_STARTED':
+            return {
+                ...state,
+                chatId: action.docId
+            }
+        case 'CHAT_EXISTS':
+            return {
+                ...state,
+                chatId: action.docId
+            }
+        case 'GET_CHATS':
+            console.log('getting chats')
+            return {
+                ...state,
+                chats: action.chatsArray
+            }
+        case 'OPEN_CHAT':
+            return {
+                ...state,
+                openChat: action.openChat
+            }
         default:
             return state
     }

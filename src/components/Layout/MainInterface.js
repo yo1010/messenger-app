@@ -6,22 +6,21 @@ import Contacts from './Contacts'
 import { Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { getInvites, getContacts, getCurrentUser } from '../../store/actions/userActions';
+import { getInvites, getContacts, getCurrentUser, getChats } from '../../store/actions/userActions';
 
 class MainInterface extends Component {
     constructor() {
         super()
     }
     componentDidMount() {
-        if (this.props.user) {
-            this.props.getInvites(this.props.user)
-            this.props.getContacts(this.props.user)
-            this.props.getCurrentUser(this.props.user)
+        if (this.props.location.state.userId) {
+            this.props.getInvites(this.props.location.state.userId)
+            this.props.getContacts(this.props.location.state.userId)
+            this.props.getCurrentUser(this.props.location.state.userId)
+            this.props.getChats(this.props.location.state.userId, this.props.currentUser)
         }
     }
     render() {
-        console.log(this.props.currentUser)
-        console.log(this.props.contacts)
         //if (!this.props.user) return <Redirect to="/" />
         return (
             <div>
@@ -29,7 +28,7 @@ class MainInterface extends Component {
                 <Switch>
                     <Route exact path="/messenger" component={Chats} />
                     <Route path="/messenger/contacts" component={Contacts} />
-                    <Route path="/messenger/chat" component={Chat} />
+                    <Route path="/messenger/chat/:chat" component={Chat} />
                 </Switch>
             </div>
         )
@@ -37,10 +36,10 @@ class MainInterface extends Component {
 }
 
 const mapStateToProps = state => {
+    console.log(state)
     return {
-        user: state.auth.userId,
-        currentUser: state.user.currentUser,
-        contacts: state.user.contacts
+        userId: state.auth.userId,
+        currentUser: state.user.currentUser
     }
 }
 
@@ -48,7 +47,8 @@ const mapDispatchToProps = dispatch => {
     return {
         getInvites: (user) => dispatch(getInvites(user)), 
         getContacts: (user) => dispatch(getContacts(user)),
-        getCurrentUser: (user) => dispatch(getCurrentUser(user))
+        getCurrentUser: (user) => dispatch(getCurrentUser(user)),
+        getChats: (user) => dispatch(getChats(user))
     }
 }
 

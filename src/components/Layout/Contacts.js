@@ -17,12 +17,13 @@ class Contacts extends Component {
                     <h5 className="contactsTitle">Contacts</h5>
                     <div className="contactsList">
                         {this.props.contacts && this.props.contacts.map(contact => {
+                            console.log(contact)
                             return (
                                 <div className="contactCard" key={this.props.contacts.indexOf(contact)}>
                                     <span className="contactName">
                                         {contact.firstName} {contact.lastName}
                                     </span>
-                                    <button className="chatButton ml-1"><Link to="/messenger/chat" onClick={() => this.props.startChat(this.props.user, contact.userId)}><i className="far fa-comments"/></Link></button>
+                                    <button className="chatButton ml-1"><Link to="/messenger/chat" onClick={() => this.props.startChat(this.props.user, contact)}><i className="far fa-comments"/></Link></button>
                                 </div>
                             )
                         })}
@@ -34,7 +35,7 @@ class Contacts extends Component {
                                 return (
                                     <div className="inviteCard my-3" key={this.props.invites.indexOf(invite)}>
                                         <span className="inviteText"><i className="far fa-bell"></i> {invite.message}</span>
-                                        <button className="inviteButton btn mx-1" onClick={() => this.props.acceptInvite(this.props.user, invite)}>Accept</button>
+                                        <button className="inviteButton btn mx-1" onClick={() => this.props.acceptInvite(this.props.user.userId, invite)}>Accept</button>
                                         <button className="inviteButton btn mx-1">Decline</button>
                                     </div>
                                 )
@@ -48,10 +49,12 @@ class Contacts extends Component {
 }
 
 const mapStateToProps = (state) => {
+    state.user.currentUser.userId = state.auth.userId
+    console.log(state)
     return {
         invites: state.user.invites,
-        user: state.auth.userId,
-        contacts: state.user.contacts
+        contacts: state.user.contacts,
+        user: state.user.currentUser
     }
 }
 

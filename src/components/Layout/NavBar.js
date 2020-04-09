@@ -29,7 +29,7 @@ export default class NavBar extends Component {
                         <li className="nav-img-item my-1"><div className="nav-img mx-auto">{this.props.user && this.props.user.initials}</div></li>
                         <li className="nav-button my-1"><button className="addButton btn" onClick={this.handleClick}>Add Friend</button></li>
                         <li className="nav-item my-1"><NavLink to="/messenger/contacts">Contacts</NavLink></li>
-                        <li className="nav-item my-1">Chats</li>
+                        <li className="nav-item my-1"><NavLink to="/messenger">Chats</NavLink></li>
                         <li className="nav-item my-1"></li>
                         <div className="nav-logo">Messenger</div>
                     </div>

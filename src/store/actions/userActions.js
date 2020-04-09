@@ -122,14 +122,95 @@ export const getContacts = (user) => {
 
 export const startChat = (currentUser, user) => {
     return (dispatch) => {
+        const docId = currentUser.userId + user.userId
         const firestore = Firebase.firestore();
-        firestore.collection('chats').add({
-            chat: [],
-            participants: [currentUser, user]
-        }).then(() => {
-            dispatch({type: "CHAT_STARTED"})
+        const docRef = firestore.collection('chats').doc(docId)
+        const currentName = currentUser.firstName + ' ' + currentUser.lastName
+        const currentInitials = currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0)
+        const otherName = user.firstName + ' ' + user.lastName
+        const otherInitials = user.firstName.charAt(0) + user.lastName.charAt(0)
+        docRef.get().then(doc => {
+            if (!doc.exists) {
+                docRef.set({
+                    chat: [],
+                    participantId: [currentUser.userId, user.userId],
+                    participantName: [currentName, otherName],
+                    participantInitials: [currentInitials, otherInitials], 
+                    chatId: docId,
+                    dateCreated: new Date()
+                }).then(() => {
+                    dispatch({type: "CHAT_STARTED", docId})
+                }).catch(err => {
+                    console.log(err)
+                })
+            } else {
+                console.log('chat exists')
+                dispatch({type: "CHAT_EXISTS", docId})
+            }
         }).catch(err => {
-            console.log(err)
+            console.log('accessing chat doc errror', err)
+        })
+    }
+}
+
+export const getChats = (userId) => {
+    return (dispatch) => {
+        const firestore = Firebase.firestore();
+        firestore.collection('chats').where('participantId', 'array-contains', userId).get().then(snapshot => {
+            if (!snapshot.empty) {
+                var chatsArray = [];
+                snapshot.forEach(doc => {
+                    const docVal = doc.data();
+                    chatsArray.push(docVal)
+                })
+                dispatch({type: 'GET_CHATS', chatsArray})
+            } else {
+                console.log('empty')
+            }
+        })
+    }
+}
+
+export const openChat = (participant1, participant2) => {
+    return (dispatch) => {
+        const docId = participant1 + participant2
+        console.log(docId)
+        const docIdTwo = participant2 + participant1
+        console.log(docIdTwo)
+        const firestore = Firebase.firestore()
+        const docRef = firestore.collection('chats').doc(docId)
+        const docRefTwo = firestore.collection('chats').doc(docIdTwo)
+        docRef.get().then(doc => {
+            if (!doc.exists) {
+                console.log('no document')
+                docRefTwo.get().then(doc => {
+                    if (!doc.exists) {
+                        console.log('no document')
+                    } else {
+                        console.log(doc.data())
+                        const openChat = doc.data()
+                        dispatch('OPEN_CHAT', openChat)
+                    }
+                })
+            } else {
+                console.log(doc.data())
+                const openChat = doc.data()
+                dispatch('OPEN_CHAT', openChat)
+            }
+        }).catch(err => {
+            console.log('open chat error', err)
+        });
+    }
+}
+export const sendMessage = (input, docId) => {
+    return (dispatch) => {
+        const firestore = Firebase.firestore()
+        firestore.collection('chats').doc(docId).set({
+            chat: firebase.firestore.FieldValue.arrayUnion(input)
+        }, {merge : true}).then(() => {
+            dispatch({type: "MESSAGE_SENT"})
+        }).catch(err => {
+            console.log('message_send', err)
         })
     }
 }
