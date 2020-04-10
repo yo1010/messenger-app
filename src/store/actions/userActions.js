@@ -202,7 +202,9 @@ export const openChat = (participant1, participant2) => {
         });
     }
 }
+
 export const sendMessage = (input, docId) => {
+    console.log(input)
     return (dispatch) => {
         const firestore = Firebase.firestore()
         firestore.collection('chats').doc(docId).set({
@@ -211,6 +213,25 @@ export const sendMessage = (input, docId) => {
             dispatch({type: "MESSAGE_SENT"})
         }).catch(err => {
             console.log('message_send', err)
+        })
+    }
+}
+
+export const getMessages = (docId) => {
+    return (dispatch) => {
+        const firestore = Firebase.firestore()
+        firestore.collection('chats').doc(docId).get().then(doc => {
+            var messagesArray = [];
+            const messages = doc.data().chat
+            console.log(messages)
+            messages.forEach(message => {
+                console.log(message)
+                messagesArray.push(message)
+            })
+            console.log(messagesArray)
+            dispatch({type: "GET_MESSAGES", messagesArray})
+        }).catch(err => {
+            dispatch({type: "GET_MESSAGES_ERROR", err})
         })
     }
 }

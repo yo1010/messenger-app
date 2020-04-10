@@ -66,6 +66,11 @@ function userReducer(state=initState, action) {
                 ...state,
                 openChat: action.openChat
             }
+        case 'GET_MESSAGES':
+            return {
+                ...state,
+                messages: action.messagesArray
+            }
         default:
             return state
     }
