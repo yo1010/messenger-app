@@ -8,7 +8,6 @@ export const getUsers = () => {
         console.log(firestore)
         firestore.collection('users').get().then(snapshot => {
             snapshot.docs.forEach(doc => {
-                console.log(doc.data())
                 userArray.push(doc.data())
             })
             dispatch({type: "GET_USERS", userArray})
@@ -23,7 +22,6 @@ export const getCurrentUser = (user) => {
         const firestore = Firebase.firestore();
         firestore.collection('users').doc(user).get().then(doc => {
             const currentUser = doc.data()
-            console.log(currentUser)
             dispatch({type: "CURRENT_USER", currentUser})
         })
     }
@@ -32,12 +30,9 @@ export const getCurrentUser = (user) => {
 export const sendInvite = (email, user) => {
     return (dispatch) => {
         const firestore = Firebase.firestore();
-        var inviteMessage = ''
-        firestore.collection('users').doc(user).get().then(doc => {
-            const userFirstName = doc.data().firstName
-            const userLastName = doc.data().lastName
-            inviteMessage = userFirstName + " " + userLastName + " wants to chat!"
-        })
+        const userFirstName = user.firstName
+        const userLastName = user.lastName
+        const inviteMessage = userFirstName + " " + userLastName + " wants to chat!"
         const successMessage = "This person has been sent an invite!"
         const errorMessage = "No matching users with this email!"
         firestore.collection('users').where('email', '==', email).get().then(snapshot => {
@@ -48,7 +43,11 @@ export const sendInvite = (email, user) => {
             snapshot.forEach(doc => {
                 const inviteObject = {}
                 inviteObject.message = inviteMessage
-                inviteObject.user = user
+                inviteObject.user = {}
+                inviteObject.user.userId = user.userId
+                inviteObject.user.firstName = user.firstName
+                inviteObject.user.lastName = user.lastName
+                inviteObject.user.initials = user.initials
                 firestore.collection('users').doc(doc.id).set({
                     invites: firebase.firestore.FieldValue.arrayUnion(inviteObject)
                 }, {merge: true})
@@ -66,7 +65,6 @@ export const getInvites = (user) => {
         const firestore = Firebase.firestore();
         firestore.collection('users').doc(user).get().then(doc => {
             const invites = doc.data().invites
-            console.log(invites)
             dispatch({type: "GET_INVITES", invites})
         }).catch(err => {
             dispatch({type: "GET_INVITES_ERROR", err})
@@ -77,15 +75,21 @@ export const getInvites = (user) => {
 export const acceptInvite = (user, invite) => {
     return (dispatch) => {
         const firestore = Firebase.firestore();
-        firestore.collection('users').doc(user).set({
+        firestore.collection('users').doc(user.userId).set({
             contacts: firebase.firestore.FieldValue.arrayUnion(invite.user)
         }, {merge: true})
         .then(() => {
             console.log('first contact added')
+            dispatch({type: "INVITE_ACCEPTED"})
         }).catch(err => {
             console.log(err)
         })
-        firestore.collection('users').doc(invite.user).set({
+        const currentUser = {}
+        currentUser.userId = user.userId
+        currentUser.firstName = user.firstName
+        currentUser.lastName = user.lastName
+        currentUser.initials = user.initials
+        firestore.collection('users').doc(invite.user.userId).set({
             contacts: firebase.firestore.FieldValue.arrayUnion(user)
         }, {merge: true})
         .then(() => {
@@ -105,12 +109,7 @@ export const getContacts = (user) => {
             const contacts = doc.data().contacts
             console.log(contacts)
             contacts.forEach(contact => {
-                firestore.collection('users').doc(contact).get().then(doc => {
-                    const contactObject = doc.data()
-                    contactObject.userId = contact
-                    console.log(contactObject)
-                    contactsArray.push(contactObject)
-                })
+                contactsArray.push(contact)
             })
             console.log(contactsArray)
             dispatch({type: "GET_CONTACTS", contactsArray})
@@ -121,14 +120,16 @@ export const getContacts = (user) => {
 }
 
 export const startChat = (currentUser, user) => {
+    console.log(currentUser)
+    console.log(user)
     return (dispatch) => {
         const docId = currentUser.userId + user.userId
         const firestore = Firebase.firestore();
         const docRef = firestore.collection('chats').doc(docId)
         const currentName = currentUser.firstName + ' ' + currentUser.lastName
-        const currentInitials = currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0)
+        const currentInitials = currentUser.initials
         const otherName = user.firstName + ' ' + user.lastName
-        const otherInitials = user.firstName.charAt(0) + user.lastName.charAt(0)
+        const otherInitials = user.initials
         docRef.get().then(doc => {
             if (!doc.exists) {
                 docRef.set({

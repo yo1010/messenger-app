@@ -31,16 +31,17 @@ class SignIn extends Component{
                 <AuthNav />
                 <div className="container">
                     <form onSubmit={this.handleSubmit} className="mx-auto">
+                        <p className="loginText mx-auto">Log in with <span className="green"> test@gmail.com / test123 </span> to see how app works</p>
                         <h5 className="formHeader">
                             Sign In
                         </h5>
                         <div className="input-field">
                             <label htmlFor="email">Email</label>
-                            <input className="" type="email" id="email" onChange={this.handleChange} onClick={this.handleClick}/>
+                            <input className="" type="email" id="email" onChange={this.handleChange} onFocus={this.handleClick} />
                         </div>
                         <div className="input-field">
                             <label htmlFor="password">Password</label>
-                            <input className="" type="password" id="password" onChange={this.handleChange} onClick={this.handleClick}/>
+                            <input className="" type="password" id="password" onChange={this.handleChange} onFocus={this.handleClick}/>
                         </div>
                         <div className="input-field">
                             <button className="btn">Sign in</button>
@@ -71,6 +72,13 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn)
 
 const SignInWrapper = styled.div`
+    .green { 
+        color: seagreen;
+    }
+    .loginText {
+        text-align: center;
+        color: slategrey;
+    }
     .container {
         form {
             margin-top: 7rem;

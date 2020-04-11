@@ -2,22 +2,16 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import img from '../../userImg.jpg'
 import { connect } from 'react-redux';
-import { sendMessage, getMessages } from '../../store/actions/userActions'
+import { sendMessage } from '../../store/actions/userActions'
+import Firebase from '../../config/firebase'
 
 class Chat extends Component {
     constructor() {
         super();
         this.state = {
-            input: ''
+            input: '',
+            chat: {}
         }
-        this.array = [
-            {message: "Hello man, how are you? Where are you now?", user: "user1"},
-            {message: "Hi man, how are you? Where are you now?", user: "user2"},
-            {message: "Sup", user: "user1"},
-            {message: "Nothing", user: "user2"},
-            {message: "Cool", user: "user1"},
-            {message: "Safe", user: "user2"}
-        ]
     }
     handleChange = (e) => {
         this.setState({
@@ -42,29 +36,32 @@ class Chat extends Component {
         console.log(this.state)
     }
     componentDidMount() {
-        this.props.getMessages(this.props.location.state.chat.chatId)
+        const firestore = Firebase.firestore()
+        const db = firestore.collection('chats').doc(this.props.location.state.chat.chatId)
+        db.onSnapshot(docSnapshot => {
+            console.log(docSnapshot.data())
+            this.setState({
+                chat: docSnapshot.data()
+            })
+        })
         var objDiv = document.getElementById("messagesContainer");
         if (objDiv != null) {
             objDiv.scrollTop = objDiv.scrollHeight;
         }
     }
     componentDidUpdate() {
-        this.props.getMessages(this.props.location.state.chat.chatId)
         var objDiv = document.getElementById("messagesContainer");
         if (objDiv != null) {
             objDiv.scrollTop = objDiv.scrollHeight;
         }
     }
     shouldComponentUpdate(nextProps, nextState) {
-        const currentMessages = this.props.messages ? this.props.messages.length : 0
-        console.log(currentMessages)
-        const nextMessages = nextProps.messages && nextProps.messages.length
-        console.log(nextMessages)
-        return nextMessages > currentMessages || this.state.input != nextState.input
+        return this.state.input != nextState.input || this.state.chat != nextState.chat
     }
     render() {
         const date = new Date(this.props.location.state.chat.dateCreated.seconds * 1000).toDateString()
         console.log(this.props.messages)
+        console.log(this.state.chat)
         return (
             <ChatWrapper>
                 <div className="chatContainer">
@@ -84,9 +81,9 @@ class Chat extends Component {
                         </div>
                     </div>
                     <div className="chatBody" id="messagesContainer">
-                        {this.props.messages && this.props.messages.map(message => {
+                        {this.state.chat.chat ? this.state.chat.chat.map(message => {
                             return (
-                                <div className="row my-1" key={this.props.messages.indexOf(message) + 88}>
+                                <div className="row my-1" key={this.state.chat.chat.indexOf(message) + 88}>
                                     {message.sender === this.props.location.state.fullName ?
                                         <React.Fragment>
                                             <div className={message.sender === this.props.location.state.fullName ? "messageContainer sendDiv col-6 mb-3" : "messageContainer receiveDiv col-6 mb-3"}>
@@ -119,7 +116,7 @@ class Chat extends Component {
                                         </React.Fragment>}
                                 </div>
                             )
-                        })}
+                        }) : null}
                     </div>
                     <div className="chatInputContainer">
                         <form className="row" onSubmit={this.handleSubmit}>
@@ -135,21 +132,14 @@ class Chat extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        messages: state.user.messages
-    }
-}
-
 const mapDispatchToProps = dispatch => {
     return {
-        sendMessage: (input, docId) => dispatch(sendMessage(input, docId)), 
-        getMessages: (docId) => dispatch(getMessages(docId))
+        sendMessage: (input, docId) => dispatch(sendMessage(input, docId))
     }
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chat)
+export default connect(null, mapDispatchToProps)(Chat)
 
 const ChatWrapper = styled.div`
     position: fixed;

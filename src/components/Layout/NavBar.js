@@ -27,10 +27,9 @@ export default class NavBar extends Component {
                 <nav className="navbar nav">
                     <div className="nav-list">
                         <li className="nav-img-item my-1"><div className="nav-img mx-auto">{this.props.user && this.props.user.initials}</div></li>
-                        <li className="nav-button my-1"><button className="addButton btn" onClick={this.handleClick}>Add Friend</button></li>
-                        <li className="nav-item my-1"><NavLink to="/messenger/contacts">Contacts</NavLink></li>
+                        <li className="nav-button my-1 mx-auto"><button className="addButton btn" onClick={this.handleClick}>Add Friend</button></li> 
+                        <li className="nav-item nav-item-contacts my-1"><NavLink to="/messenger/contacts">Contacts</NavLink></li>
                         <li className="nav-item my-1"><NavLink to="/messenger">Chats</NavLink></li>
-                        <li className="nav-item my-1"></li>
                         <div className="nav-logo">Messenger</div>
                     </div>
                 </nav>
@@ -42,6 +41,8 @@ export default class NavBar extends Component {
 
 const NavBarWrapper = styled.div`
     position: fixed;
+    width: 10rem;
+    height: 100vh;
     .nav {
         position: fixed;
         top: 0%;
@@ -59,6 +60,8 @@ const NavBarWrapper = styled.div`
             text-align: center;
             width: 100%;
             height: 100%;
+            font-weight: bold;
+            font-size: 1.1rem;
         }
         .nav-logo {
             position: fixed;
@@ -106,6 +109,11 @@ const NavBarWrapper = styled.div`
             background: seagreen;
             color: white;
             outline: none;
+            box-shadow: 0 0 10px -5px grey;
+            transition: background 0.5s;
+        }
+        .addButton:hover {
+            background: slategrey;
         }
     }
 `

@@ -9,7 +9,7 @@ function userReducer(state=initState, action) {
                 ...state,
                 users: action.userArray
             }
-        case 'GET_USERS':
+        case 'GET_USERS_ERR':
             console.log(action.err)
             return state
         case 'CURRENT_USER':

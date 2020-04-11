@@ -17,7 +17,7 @@ class MainInterface extends Component {
             this.props.getInvites(this.props.location.state.userId)
             this.props.getContacts(this.props.location.state.userId)
             this.props.getCurrentUser(this.props.location.state.userId)
-            this.props.getChats(this.props.location.state.userId, this.props.currentUser)
+            this.props.getChats(this.props.location.state.userId)
         }
     }
     render() {
@@ -36,7 +36,6 @@ class MainInterface extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
         userId: state.auth.userId,
         currentUser: state.user.currentUser

@@ -27,7 +27,7 @@ class Register extends Component{
         console.log(e.target.parentNode.childNodes[0])
     }
     render() {
-        if (this.props.userId) return <Redirect to="/messenger" />
+        if (this.props.userId) return <Redirect to={{pathname: '/messenger', state: {userId: this.props.userId}}} />
         return (
             <RegisterWrapper>
                 <AuthNav />
@@ -38,19 +38,19 @@ class Register extends Component{
                         </h5>
                         <div className="input-field">
                             <label htmlFor="email">Email</label>
-                            <input className="" type="email" id="email" onChange={this.handleChange} onClick={this.handleClick}/>
+                            <input className="" type="email" id="email" onChange={this.handleChange} onFocus={this.handleClick}/>
                         </div>
                         <div className="input-field">
                             <label htmlFor="password">Password</label>
-                            <input className="" type="password" id="password" onChange={this.handleChange} onClick={this.handleClick}/>
+                            <input className="" type="password" id="password" onChange={this.handleChange} onFocus={this.handleClick}/>
                         </div>
                         <div className="input-field">
                             <label htmlFor="firstName">First Name</label>
-                            <input className="" type="text" id="firstName" onChange={this.handleChange} onClick={this.handleClick}/>
+                            <input className="" type="text" id="firstName" onChange={this.handleChange} onFocus={this.handleClick}/>
                         </div>
                         <div className="input-field">
                             <label htmlFor="lastName">Last Name</label>
-                            <input className="" type="text" id="lastName" onChange={this.handleChange} onClick={this.handleClick}/>
+                            <input className="" type="text" id="lastName" onChange={this.handleChange} onFocus={this.handleClick}/>
                         </div>
                         <div className="input-field">
                             <button className="btn">Sign up</button>
